@@ -1,50 +1,314 @@
 @import "tailwindcss";
 
-/* Barnaura Custom Styles */
+/* ============================================
+   BASE
+   ============================================ */
+*, *::before, *::after { cursor: none !important; box-sizing: border-box; }
+
+@media (hover: none) {
+  *, *::before, *::after { cursor: auto !important; }
+  .cinema-cursor-dot, .cinema-cursor-ring { display: none !important; }
+}
+
 body {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #0B0B0B;
+  color: #F5F5F1;
   overflow-x: hidden;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-.glass-pane {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+/* ============================================
+   CUSTOM CURSOR
+   ============================================ */
+.cinema-cursor-dot {
+  position: fixed; top: 0; left: 0;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #E50914; pointer-events: none;
+  z-index: 9999; will-change: transform;
+}
+.cinema-cursor-ring {
+  position: fixed; top: 0; left: 0;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid rgba(229,9,20,0.55);
+  pointer-events: none; z-index: 9998;
+  will-change: transform; transition: border-color 0.3s;
 }
 
-.cinematic-overlay {
-  background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.9) 100%);
+/* ============================================
+   FILM GRAIN
+   ============================================ */
+.film-grain-svg {
+  position: fixed; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none; z-index: 9997;
+  opacity: 0.038;
+  animation: grainShift 0.45s steps(1) infinite;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0%,0%); }
+  10%  { transform: translate(-2%,-3%); }
+  20%  { transform: translate(3%,1%); }
+  30%  { transform: translate(1%,-2%); }
+  40%  { transform: translate(-1%,4%); }
+  50%  { transform: translate(-4%,2%); }
+  60%  { transform: translate(3%,-3%); }
+  70%  { transform: translate(2%,3%); }
+  80%  { transform: translate(-2%,1%); }
+  90%  { transform: translate(1%,-4%); }
 }
 
-.particles-bg {
-  background-image: radial-gradient(circle, rgba(229, 9, 20, 0.15) 1px, transparent 1px);
-  background-size: 50px 50px;
-}
-
-.lens-flare {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(229, 9, 20, 0.2) 0%, transparent 70%);
-  filter: blur(60px);
-  z-index: 1;
+/* ============================================
+   VIGNETTE
+   ============================================ */
+.vignette {
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.88) 100%);
   pointer-events: none;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(2deg); }
+/* ============================================
+   LIGHT LEAKS
+   ============================================ */
+.light-leak-tl {
+  position: absolute; top: -15%; left: -8%;
+  width: 55%; height: 55%; pointer-events: none;
+  background: radial-gradient(ellipse, rgba(255,140,40,0.07) 0%, transparent 70%);
+  animation: leakFlicker 5s ease-in-out infinite alternate;
 }
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+.light-leak-br {
+  position: absolute; bottom: -15%; right: -8%;
+  width: 45%; height: 45%; pointer-events: none;
+  background: radial-gradient(ellipse, rgba(229,9,20,0.06) 0%, transparent 70%);
+  animation: leakFlicker 7s ease-in-out infinite alternate-reverse;
+}
+@keyframes leakFlicker {
+  0%   { opacity: 1; transform: scale(1); }
+  50%  { opacity: 0.6; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-@keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+/* ============================================
+   BUTTONS
+   ============================================ */
+.projector-btn {
+  position: relative; padding: 16px 52px;
+  background: transparent; border: 1px solid #E50914;
+  color: #F5F5F1; font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 0.8rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  overflow: hidden; transition: color 0.3s, box-shadow 0.3s;
 }
-.animate-pulse-slow {
-  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.projector-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: #E50914; transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  z-index: 0;
 }
+.projector-btn span { position: relative; z-index: 1; }
+.projector-btn:hover::before { transform: scaleX(1); }
+.projector-btn:hover { box-shadow: 0 0 50px rgba(229,9,20,0.45), 0 0 100px rgba(229,9,20,0.15); }
+
+.ghost-btn {
+  padding: 14px 40px; background: transparent;
+  border: 1px solid rgba(245,245,241,0.2); color: #F5F5F1;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+  font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase;
+  transition: border-color 0.3s, background 0.3s;
+}
+.ghost-btn:hover { border-color: rgba(245,245,241,0.6); background: rgba(245,245,241,0.05); }
+
+/* ============================================
+   TEXT GRADIENTS
+   ============================================ */
+.text-red-gradient {
+  background: linear-gradient(135deg, #E50914 0%, #B20710 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ============================================
+   SECTION LABELS
+   ============================================ */
+.eyebrow {
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem;
+  letter-spacing: 0.55em; text-transform: uppercase; font-weight: 700;
+}
+.section-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 8vw, 110px); line-height: 1;
+}
+
+/* ============================================
+   SCROLL HINT
+   ============================================ */
+.scroll-line {
+  width: 1px; height: 56px;
+  background: linear-gradient(to bottom, rgba(245,245,241,0.5), transparent);
+  animation: scrollPulse 2.2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity:1; transform: scaleY(1); }
+  50%      { opacity:0.25; transform: scaleY(0.4); }
+}
+
+/* ============================================
+   NO SCROLLBAR
+   ============================================ */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ============================================
+   FILM CARDS (Now Showing)
+   ============================================ */
+.film-card {
+  position: relative; flex-shrink: 0;
+  width: clamp(220px, 22vw, 300px);
+  border-radius: 3px; overflow: hidden;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s;
+}
+.film-card:hover {
+  transform: scale(1.04) translateY(-6px);
+  box-shadow: 0 0 60px rgba(229,9,20,0.4), 0 20px 60px rgba(0,0,0,0.8);
+}
+.film-card-border {
+  position: absolute; inset: 0; border: 2px solid transparent;
+  transition: border-color 0.4s; border-radius: 3px; z-index: 10; pointer-events: none;
+}
+.film-card:hover .film-card-border { border-color: #E50914; }
+
+/* ============================================
+   FILM STRIP (Film Archive)
+   ============================================ */
+.film-strip-track {
+  display: flex; align-items: center; gap: 0;
+  padding: 0 80px;
+}
+.film-frame {
+  position: relative; flex-shrink: 0;
+  width: 260px; height: 360px;
+  background: #111;
+  border-left: 3px solid #181818; border-right: 3px solid #181818;
+  overflow: hidden;
+}
+.film-frame::before, .film-frame::after {
+  content: '';
+  position: absolute; left: 0; right: 0; height: 22px;
+  background: repeating-linear-gradient(90deg, #111 0, #111 10px, #2a2a2a 10px, #2a2a2a 22px);
+  z-index: 2;
+}
+.film-frame::before { top: 0; }
+.film-frame::after  { bottom: 0; }
+.film-frame img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s, filter 0.5s;
+}
+.film-frame:hover img { transform: scale(1.06); filter: brightness(1.1); }
+
+/* ============================================
+   TYPEWRITER
+   ============================================ */
+.typewriter-cursor {
+  display: inline-block; width: 2px; height: 1em;
+  background: #E50914; margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* ============================================
+   TEAM CARDS
+   ============================================ */
+.team-card { position: relative; overflow: hidden; border-radius: 2px; }
+.team-card img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(90%) brightness(0.65);
+  transition: filter 0.6s ease, transform 0.7s ease;
+  display: block;
+}
+.team-card:hover img { filter: grayscale(0%) brightness(0.9); transform: scale(1.06); }
+.team-card-veil {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.7);
+  transition: opacity 0.5s ease;
+}
+.team-card:hover .team-card-veil { opacity: 0.1; }
+.team-card-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+  transform: translateY(12px); opacity: 0;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.team-card:hover .team-card-info { transform: translateY(0); opacity: 1; }
+
+/* ============================================
+   CINEMATIC MODAL
+   ============================================ */
+.cinema-modal-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.93); backdrop-filter: blur(14px);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ============================================
+   ROLLING CREDITS
+   ============================================ */
+.credits-roll { animation: rollUp 28s linear forwards; }
+@keyframes rollUp {
+  from { transform: translateY(100vh); }
+  to   { transform: translateY(-100%); }
+}
+
+/* ============================================
+   BEHIND THE SCENES SCENE SHAKE
+   ============================================ */
+.scene-shake { animation: cameraShake 0.8s ease-in-out infinite; }
+@keyframes cameraShake {
+  0%,100% { transform: translate(0,0) rotate(0deg); }
+  20%     { transform: translate(-1px,1px) rotate(-0.3deg); }
+  40%     { transform: translate(2px,-1px) rotate(0.2deg); }
+  60%     { transform: translate(-2px,1px) rotate(-0.2deg); }
+  80%     { transform: translate(1px,2px) rotate(0.3deg); }
+}
+
+/* ============================================
+   FLOAT ANIMATION (immersive)
+   ============================================ */
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%     { transform: translateY(-18px) rotate(3deg); }
+}
+.anim-float { animation: float 6s ease-in-out infinite; }
+.anim-float-2 { animation: float 8s ease-in-out infinite reverse; animation-delay: -2s; }
+.anim-float-3 { animation: float 5s ease-in-out infinite; animation-delay: -1s; }
+
+/* ============================================
+   CONTACT FORM
+   ============================================ */
+.cinema-input {
+  width: 100%; background: transparent;
+  border: none; border-bottom: 1px solid rgba(245,245,241,0.2);
+  color: #F5F5F1; font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem; padding: 14px 0;
+  outline: none; transition: border-color 0.3s;
+}
+.cinema-input::placeholder { color: rgba(245,245,241,0.3); }
+.cinema-input:focus { border-bottom-color: #E50914; }
+
+/* ============================================
+   LEGACY (preserved for intro)
+   ============================================ */
+.glass-pane {
+  background: rgba(255,255,255,0.03); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+}
+.cinematic-overlay { background: linear-gradient(180deg,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.9) 100%); }
+.particles-bg { background-image: radial-gradient(circle,rgba(229,9,20,0.15) 1px,transparent 1px); background-size: 50px 50px; }
+.lens-flare { position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(229,9,20,0.2) 0%,transparent 70%); filter:blur(60px); z-index:1; pointer-events:none; }
+@keyframes float-legacy { 0%,100%{transform:translateY(0) rotate(0deg);} 50%{transform:translateY(-20px) rotate(2deg);} }
+.animate-float { animation: float-legacy 6s ease-in-out infinite; }
+@keyframes pulse-slow { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+.animate-pulse-slow { animation: pulse-slow 4s cubic-bezier(.4,0,.6,1) infinite; }

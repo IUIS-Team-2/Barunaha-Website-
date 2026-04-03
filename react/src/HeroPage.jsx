@@ -1,180 +1,150 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import CinematicNav from './components/CinematicNav';
 
 export default function HeroPage() {
-  const comp = useRef(null);
+  const heroRef  = useRef(null);
+  const bgRef    = useRef(null);
   const canvasRef = useRef(null);
 
-  // GSAP Entry Animations
+  // Mouse parallax
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      const tl = gsap.timeline();
-
-      // Ensure elements are hidden before animation starts
-      gsap.set(['.nav-el', '.hero-label', '.hero-title', '.hero-desc', '.hero-btn', '.footer-el'], { opacity: 0, y: 30 });
-      gsap.set('.glass-pane', { opacity: 0, scale: 0.9 });
-
-      tl.to('.nav-el', { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power3.out' })
-        .to('.hero-label', { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, "-=0.4")
-        .to('.hero-title', { y: 0, opacity: 1, duration: 1, ease: 'power4.out' }, "-=0.4")
-        .to('.hero-desc', { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, "-=0.6")
-        .to('.hero-btn', { y: 0, opacity: 1, duration: 0.6, stagger: 0.2, ease: 'back.out(1.5)' }, "-=0.4")
-        .to('.glass-pane', { opacity: 1, scale: 1, duration: 1.2, stagger: 0.2, ease: 'power3.out' }, "-=0.8")
-        .to('.footer-el', { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: 'power2.out' }, "-=0.5");
-        
-    }, comp);
-
-    return () => ctx.revert();
+    const move = (e) => {
+      const x = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      gsap.to(bgRef.current, { x: x * 22, y: y * 16, duration: 1.2, ease: 'power2.out' });
+    };
+    window.addEventListener('mousemove', move);
+    return () => window.removeEventListener('mousemove', move);
   }, []);
 
-  // Canvas Particle System Logic
+  // Canvas dust particles
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    let particlesArray = [];
-    let animationFrameId;
+    let particles = [], animId;
 
-    const initCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      particlesArray = [];
-      for (let i = 0; i < 50; i++) {
-        particlesArray.push(new Particle());
-      }
-    };
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
 
     class Particle {
-      constructor() {
+      constructor() { this.reset(true); }
+      reset(init = false) {
         this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 0.1;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
-        this.opacity = Math.random() * 0.5;
+        this.y = init ? Math.random() * canvas.height : canvas.height + 5;
+        this.size = Math.random() * 1.5 + 0.3;
+        this.speedX = (Math.random() - 0.5) * 0.25;
+        this.speedY = -(Math.random() * 0.45 + 0.1);
+        this.opacity = Math.random() * 0.5 + 0.1;
+        this.life = 1;
+        this.decay = Math.random() * 0.003 + 0.001;
       }
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
+        this.x += this.speedX; this.y += this.speedY; this.life -= this.decay;
+        if (this.life <= 0 || this.y < -5) this.reset();
       }
       draw() {
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.save();
+        ctx.globalAlpha = this.opacity * this.life;
+        ctx.fillStyle = Math.random() > 0.7 ? '#FFD700' : '#ffffff';
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
       }
     }
 
-    const handleParticles = () => {
-      for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update();
-        particlesArray[i].draw();
-      }
-    };
+    for (let i = 0; i < 90; i++) particles.push(new Particle());
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      handleParticles();
-      animationFrameId = requestAnimationFrame(animate);
+      particles.forEach(p => { p.update(); p.draw(); });
+      animId = requestAnimationFrame(animate);
     };
-
-    initCanvas();
     animate();
 
-    const handleResize = () => {
-      initCanvas();
-    };
+    window.addEventListener('resize', resize);
+    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
+  }, []);
 
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
-    };
+  // GSAP entrance animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.15 });
+      tl.from('.h-eyebrow',   { y: 24, opacity: 0, duration: 0.9, ease: 'power3.out' })
+        .from('.h-line-1',    { y: 70, opacity: 0, duration: 1.1, ease: 'power4.out' }, '-=0.5')
+        .from('.h-line-2',    { y: 70, opacity: 0, duration: 1.1, ease: 'power4.out' }, '-=0.85')
+        .from('.h-subtext',   { y: 20, opacity: 0, duration: 0.9, ease: 'power3.out' }, '-=0.65')
+        .from('.h-cta',       { y: 18, opacity: 0, duration: 0.8, ease: 'back.out(1.5)' }, '-=0.5')
+        .from('.h-scroll',    { opacity: 0, duration: 1, ease: 'power2.out' }, '-=0.3');
+    }, heroRef);
+    return () => ctx.revert();
   }, []);
 
   return (
-    <main ref={comp} className="relative min-h-screen w-full flex flex-col overflow-hidden font-sans bg-black">
-      
-      {/* Background Visuals */}
-      <div className="absolute inset-0 z-0">
-        <img alt="Cinematic background" className="w-full h-full object-cover opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4bDOcu1Zs9Z5hQ6ps1Z1Vh_RGeRi4lmKu1fRlcIq43tuBoHoZiesa7QtwmlPyirjaCQJQNWVvCY3ojOUx-TnoGl5ceqtAvUrV0D-HbggNuoT0biR5HLuFZWw2MwfudVxqhnkiJd6jYTOtukYJWxM8ltRVaHXu09VHxxbJcDEQahY9BU_YHDCW3Kc_3G2BXolusHKm6FNncxcsP-IFbZVQ6FPYlDe9VqKmzCOUshbJNViqlvz4LNwRZUXliy0IlLIlKQoFoq5UoSc" />
-        <div className="absolute inset-0 cinematic-overlay"></div>
-        <div className="absolute inset-0 particles-bg opacity-30"></div>
-        
-        {/* Floating Glass Panes */}
-        <div className="glass-pane absolute top-[20%] right-[10%] w-64 h-80 rounded-lg animate-float hidden lg:block" style={{ animationDelay: '0s' }}>
-          <div className="w-full h-full opacity-20 bg-[url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=400')] bg-cover"></div>
-        </div>
-        <div className="glass-pane absolute bottom-[15%] left-[5%] w-48 h-64 rounded-lg animate-float hidden lg:block" style={{ animationDelay: '2s' }}>
-          <div className="w-full h-full opacity-20 bg-[url('https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&q=80&w=400')] bg-cover"></div>
-        </div>
-        
-        {/* Lens Flares */}
-        <div className="lens-flare top-[-100px] left-[-100px]"></div>
-        <div className="lens-flare bottom-[-100px] right-[-100px] opacity-50"></div>
+    <section
+      ref={heroRef}
+      id="hero"
+      className="relative min-h-screen w-full flex flex-col overflow-hidden bg-[#0B0B0B]"
+    >
+      <CinematicNav />
+
+      {/* Background parallax layer */}
+      <div ref={bgRef} className="absolute inset-[-4%] z-0 will-change-transform">
+        <div
+          className="absolute inset-0 opacity-[0.12] bg-cover bg-center"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2000')" }}
+        />
+        {/* Light leaks */}
+        <div className="light-leak-tl" />
+        <div className="light-leak-br" />
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between px-8 py-6 lg:px-16">
-        <div className="nav-el flex items-center">
-          <span className="text-3xl font-serif font-black tracking-tighter text-white">BARNAURA</span>
-        </div>
-        <div className="hidden md:flex items-center space-x-10 text-sm font-semibold tracking-widest uppercase text-gray-300">
-          <a className="nav-el hover:text-[#E50914] transition-colors duration-300" href="#">Work</a>
-          <a className="nav-el hover:text-[#E50914] transition-colors duration-300" href="#">Services</a>
-          <a className="nav-el hover:text-[#E50914] transition-colors duration-300" href="#">About</a>
-        </div>
-        <div className="nav-el">
-          <a className="bg-[#E50914] hover:bg-red-700 text-white px-6 py-2.5 rounded-sm text-xs font-bold tracking-widest uppercase transition-all duration-300 transform hover:scale-105" href="#">
-            Start a Project
-          </a>
-        </div>
-      </nav>
+      {/* Vignette */}
+      <div className="vignette absolute inset-0 z-[1] pointer-events-none" />
 
-      {/* Hero Content */}
-      <section className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 md:px-0">
-        <div className="max-w-5xl mx-auto flex flex-col items-center">
-          <span className="hero-label inline-block text-[#E50914] font-bold tracking-[0.3em] text-xs uppercase mb-6 animate-pulse-slow">
-            Award Winning Studio
-          </span>
-          <h1 className="hero-title text-5xl md:text-8xl lg:text-9xl font-serif font-black mb-8 leading-tight tracking-tight">
-            WE BRING <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-400 to-white">VISIONS TO LIFE</span>
-          </h1>
-          <p className="hero-desc text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
-            Crafting high-end cinematic experiences for the world's most ambitious brands. From script to screen, we redefine visual storytelling.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <button className="hero-btn w-full sm:w-auto px-10 py-4 bg-[#E50914] hover:bg-red-700 text-white font-bold rounded-sm flex items-center justify-center gap-3 transition-all duration-300 group">
-              <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7z"></path></svg>
-              VIEW SHOWREEL
-            </button>
-            <button className="hero-btn w-full sm:w-auto px-10 py-4 border border-white/30 hover:bg-white hover:text-black text-white font-bold rounded-sm transition-all duration-300">
-              OUR SERVICES
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* Canvas particles */}
+      <canvas ref={canvasRef} className="absolute inset-0 z-[2] pointer-events-none" />
 
-      {/* Footer Elements */}
-      <footer className="relative z-10 p-8 flex flex-col md:flex-row justify-between items-end md:items-center text-[10px] tracking-[0.2em] uppercase text-gray-500 font-semibold">
-        <div className="footer-el mb-4 md:mb-0">
-          © 2024 BARNAURA FILMS. ALL RIGHTS RESERVED.
-        </div>
-        <div className="flex gap-8">
-          <a className="footer-el hover:text-white transition-colors" href="#">Instagram</a>
-          <a className="footer-el hover:text-white transition-colors" href="#">Vimeo</a>
-          <a className="footer-el hover:text-white transition-colors" href="#">Twitter</a>
-        </div>
-      </footer>
+      {/* Red horizontal accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E50914]/50 to-transparent z-[3]" />
 
-      {/* Particle Canvas Engine */}
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-[1]" id="particleCanvas"></canvas>
-    
-    </main>
+      {/* Main content */}
+      <div className="relative z-[4] flex-1 flex flex-col items-center justify-center text-center px-6 pt-24 pb-16">
+        {/* Eyebrow */}
+        <p className="h-eyebrow eyebrow text-[#FFD700] mb-8 opacity-80 tracking-[0.55em]">
+          BARUNAHA PRODUCTIONS — EST. 2020
+        </p>
+
+        {/* Heading */}
+        <h1 className="font-['Bebas_Neue'] leading-[0.9] mb-6 overflow-hidden" style={{ fontSize: 'clamp(58px,11vw,150px)' }}>
+          <span className="h-line-1 block text-[#F5F5F1]">STORIES THAT</span>
+          <span className="h-line-2 block text-red-gradient">MOVE FRAMES.</span>
+        </h1>
+
+        {/* Subtext */}
+        <p className="h-subtext text-[#F5F5F1]/55 text-lg md:text-xl max-w-lg mx-auto mb-14 leading-relaxed font-['Space_Grotesk'] font-light">
+          Where every frame tells a story that lasts forever.
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="h-cta flex flex-col sm:flex-row items-center gap-5">
+          <button className="projector-btn">
+            <span>Enter the Experience</span>
+          </button>
+          <a href="#now-showing" className="ghost-btn">View Our Work</a>
+        </div>
+      </div>
+
+      {/* Scroll hint */}
+      <div className="h-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-[4]">
+        <span className="eyebrow text-[#F5F5F1]/25 text-[0.6rem] tracking-[0.5em]">SCROLL</span>
+        <div className="scroll-line" />
+      </div>
+
+      {/* Corner frame decorations */}
+      <div className="absolute top-24 left-8 w-10 h-10 border-t border-l border-[#E50914]/25 z-[4]" />
+      <div className="absolute top-24 right-8 w-10 h-10 border-t border-r border-[#E50914]/25 z-[4]" />
+      <div className="absolute bottom-8 left-8 w-10 h-10 border-b border-l border-[#E50914]/25 z-[4]" />
+      <div className="absolute bottom-8 right-8 w-10 h-10 border-b border-r border-[#E50914]/25 z-[4]" />
+    </section>
   );
 }
