@@ -1,4 +1,18 @@
+import { useEffect, useState } from 'react';
+
 export default function FilmGrain() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Disable the expensive SVG filter on mobile entirely
+  if (isMobile) return null;
+
   return (
     <svg
       className="film-grain-svg"
@@ -9,7 +23,7 @@ export default function FilmGrain() {
         <feTurbulence
           type="fractalNoise"
           baseFrequency="0.72"
-          numOctaves="4"
+          numOctaves="3"
           stitchTiles="stitch"
         />
         <feColorMatrix type="saturate" values="0" />

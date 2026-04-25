@@ -5,6 +5,7 @@ import Lenis from '@studio-freight/lenis';
 import Hero from './Hero';
 import CustomCursor from './components/CustomCursor';
 import FilmGrain from './components/FilmGrain';
+import CinematicNav from './components/CinematicNav'; // <-- IMPORTED HERE!
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,6 +32,12 @@ export default function App() {
     <>
       <CustomCursor />
       <FilmGrain />
+      
+      {/* Placing CinematicNav here guarantees it is connected 
+        and sits above ALL other components!
+      */}
+      <CinematicNav /> 
+      
       <Hero />
     </>
   );
