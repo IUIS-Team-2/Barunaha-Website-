@@ -39,7 +39,7 @@ export default function Hero() {
         .to('.scene-lights', { opacity: 0, duration: 0.15 }, "+=0.3");
 
       // ==========================================
-      // SCENE 2: CAMERA (FIXED: Faster & On-Theme)
+      // SCENE 2: CAMERA 
       // ==========================================
       tl.set('.scene-camera', { display: 'flex', opacity: 1 })
         .from('.cam-icon', { scale: 0.5, opacity: 0, duration: 0.3, ease: 'back.out(2)', force3D: true })
@@ -51,7 +51,6 @@ export default function Hero() {
           ease: 'power3.out',
           force3D: true 
         }, "<0.1")
-        // Camera fades back — using opacity only (no animated filter for GPU perf)
         .to('.cam-icon', { 
           scale: 0.8, 
           opacity: 0.15, 
@@ -97,7 +96,7 @@ export default function Hero() {
           </>
         )}
         {className === 'letter-cam' && (
-          <div className="absolute inset-0 blur-2xl opacity-50 pointer-events-none" style={{background: 'radial-gradient(ellipse at 50% 80%, rgba(229,9,20,0.6), transparent 70%)'}}></div>
+          <div className="absolute inset-0 blur-3xl opacity-70 pointer-events-none" style={{background: 'radial-gradient(circle at 50% 50%, rgba(229,9,20,0.8), transparent 60%)'}}></div>
         )}
       </div>
     ));
@@ -137,23 +136,19 @@ export default function Hero() {
           <p className="z-10 mt-4 text-amber-200/40 tracking-[0.8em] text-xs uppercase" style={{fontFamily: "'Space Grotesk', sans-serif"}}>BARUNAHA PRODUCTIONS</p>
         </div>
 
-        {/* SCENE 2: CAMERA (FIXED THEME: Red/Black Cinematic) */}
+        {/* SCENE 2: CAMERA (UPGRADED METALLIC THEME) */}
         <div className="scene scene-camera absolute inset-0 flex items-center justify-center overflow-hidden bg-[#050505]">
           
-          {/* Deep Red Cinematic Glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full opacity-40 pointer-events-none" style={{background: 'radial-gradient(circle, rgba(229,9,20,0.25) 0%, transparent 60%)', filter: 'blur(50px)'}}></div>
 
-          {/* Aggressive Corner Framing */}
           <div className="absolute top-10 left-10 w-10 h-10 border-t-2 border-l-2 border-[#E50914]/40"></div>
           <div className="absolute top-10 right-10 w-10 h-10 border-t-2 border-r-2 border-[#E50914]/40"></div>
           <div className="absolute bottom-10 left-10 w-10 h-10 border-b-2 border-l-2 border-[#E50914]/40"></div>
           <div className="absolute bottom-10 right-10 w-10 h-10 border-b-2 border-r-2 border-[#E50914]/40"></div>
 
-          {/* High-Contrast Dark Camera Icon */}
           <div className="cam-icon absolute z-0 flex items-center justify-center w-64 h-48 bg-[#0B0B0B] rounded-2xl border border-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.9)]">
              <div className="absolute top-[-12px] left-1/2 -translate-x-1/2 w-24 h-4 bg-[#0B0B0B] rounded-t-lg border-t border-l border-r border-white/5"></div>
              
-             {/* Central Lens with Red Refection */}
              <div className="relative w-36 h-36 rounded-full border border-black bg-[#050505] flex items-center justify-center shadow-[inset_0_0_30px_rgba(229,9,20,0.05)]">
                 <div className="w-24 h-24 rounded-full border border-white/10 flex items-center justify-center bg-black">
                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#E50914]/20 to-transparent flex items-center justify-center border border-white/5 relative">
@@ -162,19 +157,19 @@ export default function Hero() {
                 </div>
              </div>
              
-             {/* Intense Recording dot */}
              <div className="absolute top-4 right-5 w-3 h-3 rounded-full bg-[#E50914] shadow-[0_0_15px_#E50914] animate-pulse"></div>
           </div>
 
-          {/* MAIN TEXT: Changed to Bebas Neue to match the rest of the site */}
+          {/* MAIN TEXT: Upgraded to sleek Chrome/Silver aesthetic with drop shadows */}
           <h1
-            className="absolute z-20 leading-none select-none tracking-widest drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)]"
+            className="absolute z-20 leading-none select-none drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)]"
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: 'clamp(36px, 14vw, 180px)',
+              fontSize: 'clamp(40px, 14vw, 180px)',
+              letterSpacing: '0.2em', 
             }}
           >
-            {splitText("CAMERA", "letter-cam", "text-[#F5F5F1]")}
+            {splitText("CAMERA", "letter-cam", "bg-gradient-to-b from-white via-gray-400 to-zinc-700 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]")}
           </h1>
         </div>
 

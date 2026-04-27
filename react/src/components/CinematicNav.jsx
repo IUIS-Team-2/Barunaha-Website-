@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 
 const NAV_LINKS = [
   { label: 'Work',    href: '#work',    bg: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800' },
@@ -19,6 +20,14 @@ export default function CinematicNav() {
       const img = new Image();
       img.src = link.bg;
     });
+  }, []);
+
+  // Delay the navbar appearance until AFTER the intro finishes
+  useEffect(() => {
+    gsap.fromTo(headerRef.current, 
+      { y: -100, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 1.5, delay: 4.5, ease: 'power4.out' }
+    );
   }, []);
 
   // Scroll-based glass effect for header bar
@@ -51,7 +60,7 @@ export default function CinematicNav() {
       <header 
         ref={headerRef}
         className={`fixed top-0 left-0 right-0 z-[100] flex justify-between items-center px-6 md:px-14 py-5 pointer-events-auto transition-all duration-500 ${
-          scrolled && !isOpen ? 'nav-scrolled' : ''
+          scrolled && !isOpen ? 'nav-scrolled bg-black/50 backdrop-blur-md border-b border-white/5' : ''
         }`}
       >
         {/* Logo */}
@@ -95,7 +104,7 @@ export default function CinematicNav() {
            clipPath: isOpen ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' : 'polygon(0 0, 100% 0, 100% 0, 0 0)'
         }}
       >
-        {/* Dynamic Hover Background Image — preloaded, GPU composited */}
+        {/* Dynamic Hover Background Image */}
         <div 
           className="absolute inset-0 z-0 will-change-transform"
           style={{
@@ -123,43 +132,27 @@ export default function CinematicNav() {
               onClick={() => setIsOpen(false)} 
               className="group relative text-5xl md:text-7xl lg:text-8xl font-['Bebas_Neue'] text-[#F5F5F1] uppercase tracking-widest overflow-hidden min-h-[56px] flex items-center"
               style={{
-                // Staggered entrance animation when menu opens
                 animation: isOpen ? `menuItemUp 0.6s cubic-bezier(0.16,1,0.3,1) ${i * 0.08}s both` : 'none',
               }}
             >
-              {/* Default White Text */}
               <div className="transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-full inline-block">
                 {link.label}
               </div>
-              
-              {/* Hover Red Text (Slides up from bottom) */}
               <div className="absolute top-0 left-0 transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] translate-y-full group-hover:translate-y-0 text-[#E50914] w-full text-center drop-shadow-[0_0_15px_rgba(229,9,20,0.5)] group-hover:tracking-[0.3em]">
                 {link.label}
               </div>
-
-              {/* Animated underline — expands left to right */}
-              <div className="menu-link-underline" />
             </a>
           ))}
-          
-          {/* Minimal Bottom Branding */}
           <div className="absolute bottom-12 left-1/2 -translate-x-1/2 opacity-40 text-xs font-['Space_Grotesk'] tracking-[0.4em] uppercase text-[#F5F5F1]">
             Barunaha Productions
           </div>
         </nav>
       </div>
 
-      {/* Inline keyframes for staggered menu item animation */}
       <style>{`
         @keyframes menuItemUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </>

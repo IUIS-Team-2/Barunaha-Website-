@@ -33,45 +33,58 @@ export default function EndCredits() {
     setSubmitted(true);
   };
 
+  // Helper function to render credits list to avoid duplicate code
+  const renderCreditsList = (keyPrefix) => (
+    <div className="flex flex-col w-full pb-20 text-center px-8">
+      {CREDITS.map((item, i) => {
+        if (item.type === 'divider') return <div key={`${keyPrefix}-${i}`} className="my-10 w-12 h-px bg-[#E50914]/30 mx-auto" />;
+        if (item.type === 'studio')  return <h2 key={`${keyPrefix}-${i}`} className="font-['Bebas_Neue'] text-[#F5F5F1] tracking-[0.35em] mb-4" style={{ fontSize: 'clamp(28px,5vw,52px)', letterSpacing: '0.35em' }}>{item.text}</h2>;
+        if (item.type === 'quote')   return <p key={`${keyPrefix}-${i}`} className="font-['Cinzel'] italic text-[#FFD700]/70 text-lg my-6">{item.text}</p>;
+        if (item.type === 'motto')   return <p key={`${keyPrefix}-${i}`} className="eyebrow text-[#F5F5F1]/30 text-[0.65rem] tracking-[0.35em] my-4 max-w-xs mx-auto">{item.text}</p>;
+        if (item.type === 'copy')    return <p key={`${keyPrefix}-${i}`} className="eyebrow text-[#F5F5F1]/15 text-[0.6rem] tracking-widest mt-6">{item.text}</p>;
+        return (
+          <div key={`${keyPrefix}-${i}`} className="my-5">
+            <p className="eyebrow text-[#E50914]/60 text-[0.58rem] mb-1">{item.label}</p>
+            <p className="font-['Space_Grotesk'] text-[#F5F5F1]/75 text-sm font-medium">{item.value}</p>
+          </div>
+        );
+      })}
+    </div>
+  );
+
   return (
     <section id="contact" className="relative bg-[#000000] overflow-hidden">
 
-      {/* ── ROLLING CREDITS ── */}
-      <div className="relative h-screen overflow-hidden flex items-start justify-center border-b border-[#F5F5F1]/05">
-        {/* Top / bottom fades */}
+      {/* ── SEAMLESS ROLLING CREDITS ── */}
+      <div className="relative h-screen w-full overflow-hidden flex justify-center border-b border-[#F5F5F1]/05">
+        
+        {/* Top / bottom cinematic fades */}
         <div className="pointer-events-none absolute top-0 left-0 right-0 z-10 h-32 bg-gradient-to-b from-black to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 h-32 bg-gradient-to-t from-black to-transparent" />
 
-        {/* Credits scroll column */}
-        <div className="credits-roll text-center px-8" style={{ willChange: 'transform' }}>
-          {CREDITS.map((item, i) => {
-            if (item.type === 'divider') return <div key={i} className="my-10 w-12 h-px bg-[#E50914]/30 mx-auto" />;
-            if (item.type === 'studio')  return <h2 key={i} className="font-['Bebas_Neue'] text-[#F5F5F1] tracking-[0.35em] mb-4" style={{ fontSize: 'clamp(28px,5vw,52px)', letterSpacing: '0.35em' }}>{item.text}</h2>;
-            if (item.type === 'quote')   return <p key={i} className="font-['Cinzel'] italic text-[#FFD700]/70 text-lg my-6">{item.text}</p>;
-            if (item.type === 'motto')   return <p key={i} className="eyebrow text-[#F5F5F1]/30 text-[0.65rem] tracking-[0.35em] my-4 max-w-xs mx-auto">{item.text}</p>;
-            if (item.type === 'copy')    return <p key={i} className="eyebrow text-[#F5F5F1]/15 text-[0.6rem] tracking-widest mt-6">{item.text}</p>;
-            return (
-              <div key={i} className="my-5">
-                <p className="eyebrow text-[#E50914]/60 text-[0.58rem] mb-1">{item.label}</p>
-                <p className="font-['Space_Grotesk'] text-[#F5F5F1]/75 text-sm font-medium">{item.value}</p>
-              </div>
-            );
-          })}
-          {/* Repeat for seamless loop */}
-          {CREDITS.map((item, i) => {
-            if (item.type === 'divider') return <div key={`r2-${i}`} className="my-10 w-12 h-px bg-[#E50914]/30 mx-auto" />;
-            if (item.type === 'studio')  return <h2 key={`r2-${i}`} className="font-['Bebas_Neue'] text-[#F5F5F1] tracking-[0.35em] mb-4" style={{ fontSize: 'clamp(28px,5vw,52px)', letterSpacing: '0.35em' }}>{item.text}</h2>;
-            if (item.type === 'quote')   return <p key={`r2-${i}`} className="font-['Cinzel'] italic text-[#FFD700]/70 text-lg my-6">{item.text}</p>;
-            if (item.type === 'motto')   return <p key={`r2-${i}`} className="eyebrow text-[#F5F5F1]/30 text-[0.65rem] tracking-[0.35em] my-4 max-w-xs mx-auto">{item.text}</p>;
-            if (item.type === 'copy')    return <p key={`r2-${i}`} className="eyebrow text-[#F5F5F1]/15 text-[0.6rem] tracking-widest mt-6">{item.text}</p>;
-            return (
-              <div key={`r2-${i}`} className="my-5">
-                <p className="eyebrow text-[#E50914]/60 text-[0.58rem] mb-1">{item.label}</p>
-                <p className="font-['Space_Grotesk'] text-[#F5F5F1]/75 text-sm font-medium">{item.value}</p>
-              </div>
-            );
-          })}
+        {/* Fixed Infinite Loop Container: 
+          Using margin-top separates the spacing from the element's actual height, 
+          making the -50% CSS calculation perfectly mathematically accurate for the loop.
+        */}
+        <div 
+          className="credits-infinite-track absolute top-0 w-full flex flex-col items-center" 
+          style={{ marginTop: '50vh' }}
+        >
+          {renderCreditsList('run-1')}
+          {renderCreditsList('run-2')}
         </div>
+
+        <style>{`
+          .credits-infinite-track {
+            /* 35s controls the speed of the scroll */
+            animation: creditsRoll 35s linear infinite;
+            will-change: transform;
+          }
+          @keyframes creditsRoll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+          }
+        `}</style>
       </div>
 
       {/* ── CONTACT FORM ── */}
