@@ -208,7 +208,7 @@ export default function Hero() {
                   <div>TAKE: <span className="text-white text-4xl font-bold ml-2">1</span></div>
                </div>
                <div className="w-full h-60 bg-black rounded-lg border border-gray-800 flex items-center justify-center overflow-hidden">
-                  <img src="/logo.png" alt="Barunaha Logo" className="object-contain h-full w-[120%] scale-150" />
+                  <img src="/logo1.png" alt="Barunaha Logo" className="object-contain h-full w-[120%] scale-150" />
                </div>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function Hero() {
           <div className="flex h-72 md:h-96 w-full bg-[#0a0a0a] border-t-[16px] border-b-[16px] border-dashed border-gray-600 gap-8 p-6 shadow-[0_0_150px_rgba(229,9,20,0.4)]">
             <div className="flex-1 border-4 border-[#E50914]/30 rounded-lg bg-black opacity-50"></div>
             <div className="flex-[2] border-4 border-[#E50914] rounded-lg bg-black flex items-center justify-center overflow-hidden p-4">
-               <img src="/logo.png" alt="Barunaha Logo" className="object-contain h-full w-full" />
+               <img src="/logo1.png" alt="Barunaha Logo" className="object-contain h-full w-full" />
             </div>
             <div className="flex-1 border-4 border-[#E50914]/30 rounded-lg bg-black opacity-50"></div>
           </div>

@@ -59,14 +59,17 @@ export default function CinematicNav() {
       {/* ------------------------------------------------ */}
       <header 
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-[100] flex justify-between items-center px-6 md:px-14 py-5 pointer-events-auto transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-[100] flex justify-between items-center px-6 md:px-14 py-0 pointer-events-auto transition-all duration-500 ${
           scrolled && !isOpen ? 'nav-scrolled bg-black/50 backdrop-blur-md border-b border-white/5' : ''
         }`}
       >
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-3 relative z-[110] text-[#F5F5F1] drop-shadow-md hover:opacity-80 transition-opacity duration-300">
-          <img src="/logo.png" alt="Barunaha" className="h-8 w-auto object-contain" />
-          <span className="font-['Bebas_Neue'] text-2xl tracking-[0.2em] hidden sm:block mt-1">BARUNAHA</span>
+        {/* Logo - Upgraded Size and removed redundant text */}
+        <a href="#" className="flex items-center relative z-[110] drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:opacity-80 transition-opacity duration-300">
+          <img 
+            src="/logo.png" 
+            alt="Barunaha" 
+            className="h-16 md:h-20 w-auto object-contain" 
+          />
         </a>
 
         {/* Hamburger Button */}

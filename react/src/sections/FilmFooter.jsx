@@ -14,15 +14,19 @@ export default function FilmFooter() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E50914]/40 to-transparent" />
 
       <div className="max-w-5xl mx-auto px-8 text-center">
-        {/* Logo */}
+        {/* Logo - UPGRADED */}
         <motion.div
-          className="flex justify-center mb-8"
+          className="flex justify-center mb-10"
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
         >
-          <img src="/logo.png" alt="Barunaha" className="h-14 w-auto object-contain opacity-80" />
+          <img 
+            src="/logo.png" 
+            alt="Barunaha" 
+            /* Changed to h-32 (mobile) and h-40 (desktop), removed opacity, added drop-shadow */
+            className="h-32 md:h-40 w-auto object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:scale-105 transition-transform duration-500" 
+          />
         </motion.div>
-
         {/* Studio name */}
         <motion.h3
           className="font-['Bebas_Neue'] text-[#F5F5F1]/25 text-xl tracking-[0.5em] mb-8"
