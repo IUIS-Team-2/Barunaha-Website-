@@ -8,6 +8,7 @@ import Hero from './Hero';
 import AboutPage from './pages/AboutPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ServicesPage from './pages/ServicesPage';
+import ContactPage from './pages/ContactPage';
 import CustomCursor from './components/CustomCursor';
 import FilmGrain from './components/FilmGrain';
 import CinematicNav from './components/CinematicNav';
@@ -27,9 +28,7 @@ function AppLayout() {
     gsap.ticker.add((time) => lenis.raf(time * 1000));
     gsap.ticker.lagSmoothing(0);
 
-    return () => {
-      lenis.destroy();
-    };
+    return () => { lenis.destroy(); };
   }, []);
 
   return (
@@ -52,6 +51,7 @@ function AppLayout() {
         <Route path="/services/video-editing" element={<ServicesPage defaultService="video-editing" />} />
         <Route path="/services/short-films" element={<ServicesPage defaultService="short-films" />} />
         <Route path="/services/ad-films" element={<ServicesPage defaultService="ad-films" />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </>
   );
